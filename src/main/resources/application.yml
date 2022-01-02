@@ -1,0 +1,75 @@
+server:
+  port: 9095
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+  max-http-header-size: 756000
+
+spring:
+  application:
+    name: keycloak-spring-security-integration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:7080/auth/realms/saber66/protocol/openid-connect/token
+
+service:
+  api:
+    base-path: /services/keycloak-spring-security
+    swagger:
+      path: /v2/api-docs
+      title: 'Keycloak spring security integration'
+      version: 'version1.0'
+  log:
+    pretty-print: true
+
+camel:
+  springboot:
+    route-controller-thread-pool-size: 30000
+    consumer-template-cache-size: 7000
+    producer-template-cache-size: 7000
+    endpoint-runtime-statistics-enabled: true
+    jmx-management-statistics-level: extended
+
+  servlet:
+    mapping:
+      context-path: ${service.api.base-path}/*
+  component:
+    http:
+      connections-per-route: 3000
+      max-total-connections: 30000
+      connect-timeout: 30000
+      socket-timeout: 30000
+      connection-request-timeout: 30000
+      connection-time-to-live: 30000
+
+  dataformat:
+    json-jackson:
+      auto-discover-object-mapper: true
+
+
+management:
+  endpoints:
+    web:
+      base-path: /actuators/keycloak-spring-security
+      exposure:
+        include: '*'
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: keycloak_spring_security_integration
+        url: ${service.api.base-path}${service.api.swagger.path}
+    path: /swagger-ui.html
+    oauth:
+      client-id: saberClient
+      realm: saber66
+      client-secret: cccf8261-9276-4751-834b-48958e8f1660
+      use-basic-authentication-with-access-code-grant: false
+    layout: StandaloneLayout
+  api-docs:
+    groups:
+      enabled: true
+
